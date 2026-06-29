@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gorgeous Vintage - Registro de Ventas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Gorgeous Vintage</h1>
+            <p>Registro de Ventas</p>
+        </header>
+
+        <main>
+            <section class="form-section">
+                <h2>Registrar Venta</h2>
+                <form id="salesForm">
+                    <div class="form-group">
+                        <label for="description">Descripción de la prenda</label>
+                        <input type="text" id="description" placeholder="Ej: Vestido rojo años 90" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="price">Precio (€)</label>
+                        <input type="number" id="price" min="0" step="0.01" placeholder="0.00" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tipo de pago</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="payment_type" value="Efectivo" checked>
+                                💵 Efectivo
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="payment_type" value="Tarjeta">
+                                💳 Tarjeta
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Guardar Venta</button>
+                </form>
+            </section>
+
+            <section class="summary-section">
+                <div class="summary-card card-collected">
+                    <span class="card-icon">📥</span>
+                    <div class="card-info">
+                        <h3>Efectivo Recogido</h3>
+                        <p id="totalCollected">0.00€</p>
+                    </div>
+                </div>
+                <div class="summary-card card-pending">
+                    <span class="card-icon">⏳</span>
+                    <div class="card-info">
+                        <h3>Efectivo Pendiente</h3>
+                        <p id="totalPending">0.00€</p>
+                    </div>
+                </div>
+                <div class="summary-card card-card">
+                    <span class="card-icon">💳</span>
+                    <div class="card-info">
+                        <h3>Ventas con Tarjeta</h3>
+                        <p id="totalCard">0.00€</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="monthly-section">
+                <div class="monthly-header">
+                    <h2>Resumen Mensual</h2>
+                    <div class="month-selector-container">
+                        <label for="monthSelect">Mes:</label>
+                        <input type="month" id="monthSelect">
+                    </div>
+                </div>
+                <div class="monthly-grid">
+                    <div class="monthly-card card-monthly-cash">
+                        <span class="card-icon">💵</span>
+                        <div class="card-info">
+                            <h3>Efectivo</h3>
+                            <p id="monthlyCash">0.00€</p>
+                        </div>
+                    </div>
+                    <div class="monthly-card card-monthly-card">
+                        <span class="card-icon">💳</span>
+                        <div class="card-info">
+                            <h3>Tarjeta</h3>
+                            <p id="monthlyCard">0.00€</p>
+                        </div>
+                    </div>
+                    <div class="monthly-card card-monthly-total">
+                        <span class="card-icon">📈</span>
+                        <div class="card-info">
+                            <h3>Total Facturado</h3>
+                            <p id="monthlyTotal">0.00€</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="controls">
+                <div>
+                    <label for="dateFilter">Filtrar por fecha:</label>
+                    <input type="date" id="dateFilter">
+                    <button onclick="filterSales()" class="btn-secondary">Filtrar</button>
+                </div>
+                <button onclick="exportCSV()" class="btn-secondary">📥 Exportar CSV</button>
+            </section>
+
+            <section class="sales-section">
+                <h2>Ventas Registradas</h2>
+                <div id="salesTable"></div>
+            </section>
+        </main>
+    </div>
+    <!-- Modal de confirmación de eliminación -->
+    <div id="deleteModal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-icon">🗑️</div>
+            <h3>¿Eliminar venta?</h3>
+            <p>Esta acción no se puede deshacer. La venta será eliminada permanentemente de la base de datos.</p>
+            <div class="modal-actions">
+                <button id="cancelDeleteBtn" class="btn-secondary">Cancelar</button>
+                <button id="confirmDeleteBtn" class="btn-danger">Sí, eliminar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>
