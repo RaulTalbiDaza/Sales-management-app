@@ -8,23 +8,22 @@ import io
 app = Flask(__name__)
 
 def init_db():
-    conn = sqlite3.connect('sales.db')
-    c = conn.cursor()
-    c.execute('''CREATE TABLE IF NOT EXISTS sales (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        date TEXT,
-        time TEXT,
-        description TEXT,
-        price REAL,
-        payment_type TEXT,
-        collected INTEGER DEFAULT 0
-    )''')
-    c.execute("PRAGMA table_info(sales)")
-    columns = [col[1] for col in c.fetchall()]
-    if 'collected' not in columns:
-        c.execute("ALTER TABLE sales ADD COLUMN collected INTEGER DEFAULT 0")
-    conn.commit()
-    conn.close()
+    try:
+        conn = sqlite3.connect('sales.db')
+        c = conn.cursor()
+        c.execute('''CREATE TABLE IF NOT EXISTS sales (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            date TEXT,
+            time TEXT,
+            description TEXT,
+            price REAL,
+            payment_type TEXT
+        )''')
+        conn.commit()
+        conn.close()
+        print("✅ BD inicializada correctamente")
+    except Exception as e:
+        print(f"❌ Error en init_db: {e}")
 
 @app.route('/')
 def index():
