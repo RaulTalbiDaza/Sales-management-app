@@ -77,8 +77,9 @@ async function loadSales() {
         return;
     }
 
-    let html = `
-        <table>
+    // ── Tabla para escritorio ──────────────────────────────────────────────
+    let tableHtml = `
+        <table class="sales-table-desktop">
             <thead>
                 <tr>
                     <th>Hora</th>
@@ -94,7 +95,7 @@ async function loadSales() {
 
     sales.forEach(sale => {
         const badgeClass = sale.payment_type === 'Efectivo' ? 'payment-efectivo' : 'payment-tarjeta';
-        
+
         let collectedCell = '';
         if (sale.payment_type === 'Efectivo') {
             if (sale.collected === 1) {
@@ -106,7 +107,7 @@ async function loadSales() {
             collectedCell = `<span class="collected-na">—</span>`;
         }
 
-        html += `
+        tableHtml += `
             <tr>
                 <td>${sale.time}</td>
                 <td>${sale.description}</td>
@@ -120,8 +121,46 @@ async function loadSales() {
         `;
     });
 
-    html += `</tbody></table>`;
-    tableDiv.innerHTML = html;
+    tableHtml += `</tbody></table>`;
+
+    // ── Tarjetas para móvil ────────────────────────────────────────────────
+    let cardsHtml = `<div class="sales-cards-mobile">`;
+
+    sales.forEach(sale => {
+        const badgeClass = sale.payment_type === 'Efectivo' ? 'payment-efectivo' : 'payment-tarjeta';
+
+        let actionsHtml = '';
+        if (sale.payment_type === 'Efectivo') {
+            if (sale.collected === 1) {
+                actionsHtml = `<span class="collected-badge collected-yes">Recogido 📥</span>`;
+            } else {
+                actionsHtml = `<button onclick="collectSale(${sale.id})" class="btn-collect">📥 Marcar Recogido</button>`;
+            }
+        } else {
+            actionsHtml = `<span class="collected-na">—</span>`;
+        }
+
+        cardsHtml += `
+            <div class="sale-card">
+                <div class="sale-card-header">
+                    <span class="sale-card-description">${sale.description}</span>
+                    <span class="sale-card-price">${sale.price.toFixed(2)}€</span>
+                </div>
+                <div class="sale-card-meta">
+                    <span class="sale-card-time">🕐 ${sale.time}</span>
+                    <span class="payment-badge ${badgeClass}">${sale.payment_type}</span>
+                </div>
+                <div class="sale-card-actions">
+                    ${actionsHtml}
+                    <button onclick="deleteSale(${sale.id})" class="btn-delete" title="Eliminar Venta">🗑️</button>
+                </div>
+            </div>
+        `;
+    });
+
+    cardsHtml += `</div>`;
+
+    tableDiv.innerHTML = tableHtml + cardsHtml;
 }
 
 // Marcar venta como recogida

@@ -495,6 +495,76 @@ tr:hover {
     transform: scale(0.97);
 }
 
+/* Sale cards for mobile */
+.sale-card {
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    border-left: 4px solid #D4A574;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sale-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.sale-card-description {
+    font-weight: 600;
+    color: #222;
+    font-size: 15px;
+    flex: 1;
+    word-break: break-word;
+}
+
+.sale-card-price {
+    font-size: 18px;
+    font-weight: 700;
+    color: #8B4513;
+    white-space: nowrap;
+}
+
+.sale-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    font-size: 13px;
+    color: #666;
+}
+
+.sale-card-time {
+    color: #888;
+    font-size: 12px;
+}
+
+.sale-card-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 4px;
+}
+
+.sale-card-actions .btn-collect {
+    flex: 1;
+    padding: 8px 12px;
+    font-size: 13px;
+}
+
+.sale-card-actions .btn-delete {
+    padding: 8px 10px;
+    font-size: 18px;
+    background-color: rgba(220, 53, 69, 0.08);
+    border-radius: 6px;
+}
+
 @media (max-width: 600px) {
     .monthly-header {
         flex-direction: column;
@@ -509,6 +579,7 @@ tr:hover {
     #monthSelect {
         width: 70%;
     }
+
     main {
         padding: 15px;
     }
@@ -527,12 +598,23 @@ tr:hover {
         width: 100%;
     }
 
-    table {
-        font-size: 12px;
+    /* Ocultar tabla en móvil, mostrar cards */
+    .sales-table-desktop {
+        display: none !important;
     }
 
-    th,
-    td {
-        padding: 8px;
+    .sales-cards-mobile {
+        display: block !important;
+    }
+}
+
+@media (min-width: 601px) {
+    /* Ocultar cards en escritorio, mostrar tabla */
+    .sales-cards-mobile {
+        display: none !important;
+    }
+
+    .sales-table-desktop {
+        display: table !important;
     }
 }
