@@ -17,13 +17,17 @@ def init_db():
             time TEXT,
             description TEXT,
             price REAL,
-            payment_type TEXT
+            payment_type TEXT,
+            collected INTEGER DEFAULT 0
         )''')
         conn.commit()
         conn.close()
         print("✅ BD inicializada correctamente")
     except Exception as e:
         print(f"❌ Error en init_db: {e}")
+
+# INICIALIZA AQUÍ (no dentro de if __name__)
+init_db()
 
 @app.route('/')
 def index():
@@ -99,11 +103,9 @@ def get_summary():
     conn = sqlite3.connect('sales.db')
     c = conn.cursor()
     
-    # Total cash for the month
     c.execute('SELECT SUM(price) FROM sales WHERE payment_type = "Efectivo" AND date LIKE ?', (f'{month_filter}-%',))
     cash_total = c.fetchone()[0] or 0.0
     
-    # Total card for the month
     c.execute('SELECT SUM(price) FROM sales WHERE payment_type = "Tarjeta" AND date LIKE ?', (f'{month_filter}-%',))
     card_total = c.fetchone()[0] or 0.0
     
@@ -150,5 +152,4 @@ def export_csv():
     )
 
 if __name__ == '__main__':
-    init_db()
     app.run(debug=True, port=5000)
