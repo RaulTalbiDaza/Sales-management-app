@@ -18,8 +18,15 @@ def init_db():
             description TEXT,
             price REAL,
             payment_type TEXT,
-            collected INTEGER DEFAULT 0
+            collected INTEGER DEFAULT 0,
+            seller TEXT DEFAULT ''
         )''')
+        # Añadir columna seller si no existe (para BDs antiguas)
+        try:
+            c.execute('ALTER TABLE sales ADD COLUMN seller TEXT DEFAULT \'\'')
+            conn.commit()
+        except:
+            pass
         conn.commit()
         conn.close()
         print("✅ BD inicializada correctamente")
@@ -40,10 +47,11 @@ def add_sale():
     date = now.strftime('%Y-%m-%d')
     time = now.strftime('%H:%M:%S')
     
+    seller = data.get('seller', '')
     conn = sqlite3.connect('sales.db')
     c = conn.cursor()
-    c.execute('INSERT INTO sales (date, time, description, price, payment_type, collected) VALUES (?, ?, ?, ?, ?, ?)',
-              (date, time, data['description'], data['price'], data['payment_type'], 0))
+    c.execute('INSERT INTO sales (date, time, description, price, payment_type, collected, seller) VALUES (?, ?, ?, ?, ?, ?, ?)',
+              (date, time, data['description'], data['price'], data['payment_type'], 0, seller))
     conn.commit()
     conn.close()
     
@@ -72,7 +80,8 @@ def get_sales():
             'description': s[3],
             'price': s[4],
             'payment_type': s[5],
-            'collected': s[6]
+            'collected': s[6],
+            'seller': s[7] if len(s) > 7 else ''
         } for s in sales
     ])
 
@@ -135,13 +144,14 @@ def export_csv():
     
     output = io.StringIO()
     writer = csv.writer(output)
-    writer.writerow(['Fecha', 'Hora', 'Descripción', 'Precio', 'Tipo Pago', 'Recogido'])
+    writer.writerow(['Fecha', 'Hora', 'Descripción', 'Precio', 'Tipo Pago', 'Recogido', 'Vendedora'])
     
     for sale in sales:
         collected_str = 'No aplica'
         if sale[5] == 'Efectivo':
             collected_str = 'Sí' if sale[6] == 1 else 'No'
-        writer.writerow([sale[1], sale[2], sale[3], sale[4], sale[5], collected_str])
+        seller = sale[7] if len(sale) > 7 else ''
+        writer.writerow([sale[1], sale[2], sale[3], sale[4], sale[5], collected_str, seller])
     
     output.seek(0)
     return send_file(

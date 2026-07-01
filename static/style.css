@@ -618,3 +618,118 @@ tr:hover {
         display: table !important;
     }
 }
+
+/* ── Usuario activo en el header ─────────────────────────────────────────── */
+.active-user-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 10px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    padding: 6px 16px;
+    backdrop-filter: blur(4px);
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.active-user-badge span {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.3px;
+}
+
+.btn-change-user {
+    background: rgba(255, 255, 255, 0.25);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 12px;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+}
+
+.btn-change-user:hover {
+    background: rgba(255, 255, 255, 0.4);
+    transform: translateY(-1px);
+}
+
+/* ── Modal de selección de usuario ──────────────────────────────────────── */
+.user-modal-box {
+    max-width: 420px;
+}
+
+.user-buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-user {
+    flex: 1;
+    min-width: 130px;
+    padding: 18px 20px;
+    border: none;
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    letter-spacing: 0.3px;
+}
+
+.btn-user:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.btn-user:active {
+    transform: scale(0.97);
+}
+
+.btn-nancy {
+    background: linear-gradient(135deg, #e91e8c 0%, #f06292 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(233, 30, 140, 0.3);
+}
+
+.btn-celeste {
+    background: linear-gradient(135deg, #6a5acd 0%, #9c88ff 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(106, 90, 205, 0.3);
+}
+
+/* ── Etiquetas de vendedora en tabla y tarjetas ──────────────────────────── */
+.seller-badge {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+}
+
+.seller-nancy {
+    background: linear-gradient(135deg, #fce4ec, #f8bbd9);
+    color: #880e4f;
+    border: 1px solid #f48fb1;
+}
+
+.seller-celeste {
+    background: linear-gradient(135deg, #ede7f6, #d1c4e9);
+    color: #311b92;
+    border: 1px solid #b39ddb;
+}
+
+.seller-unknown {
+    background: #f5f5f5;
+    color: #999;
+    border: 1px solid #ddd;
+}

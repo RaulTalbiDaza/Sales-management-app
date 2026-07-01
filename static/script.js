@@ -1,10 +1,33 @@
+// ── Gestión de usuarios ──────────────────────────────────────────────────────
+let activeUser = sessionStorage.getItem('activeUser') || null;
+
+function selectUser(name) {
+    activeUser = name;
+    sessionStorage.setItem('activeUser', name);
+    document.getElementById('userModal').style.display = 'none';
+    document.getElementById('activeUserBadge').style.display = 'flex';
+    document.getElementById('activeUserName').textContent = '👤 ' + name;
+    loadSales();
+}
+
+function changeUser() {
+    document.getElementById('userModal').style.display = 'flex';
+}
+
+// ── Inicialización ───────────────────────────────────────────────────────────
 const form = document.getElementById('salesForm');
 const dateFilter = document.getElementById('dateFilter');
 
-// Cargar ventas al abrir la app
 document.addEventListener('DOMContentLoaded', () => {
+    // Si ya hay usuario en sesión, ocultar modal
+    if (activeUser) {
+        document.getElementById('userModal').style.display = 'none';
+        document.getElementById('activeUserBadge').style.display = 'flex';
+        document.getElementById('activeUserName').textContent = '👤 ' + activeUser;
+    }
+
     setTodayFilter();
-    
+
     const monthSelect = document.getElementById('monthSelect');
     const now = new Date();
     const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
@@ -13,9 +36,14 @@ document.addEventListener('DOMContentLoaded', () => {
     loadMonthlySummary();
 });
 
-// Registrar venta
+// ── Registrar venta ──────────────────────────────────────────────────────────
 form.addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    if (!activeUser) {
+        document.getElementById('userModal').style.display = 'flex';
+        return;
+    }
 
     const description = document.getElementById('description').value;
     const price = parseFloat(document.getElementById('price').value);
@@ -27,18 +55,19 @@ form.addEventListener('submit', async (e) => {
         body: JSON.stringify({
             description,
             price,
-            payment_type: paymentType
+            payment_type: paymentType,
+            seller: activeUser
         })
     });
 
     if (response.ok) {
         form.reset();
         loadSales();
-        showMessage('✅ Venta registrada correctamente');
+        showMessage(`✅ Venta registrada por ${activeUser}`);
     }
 });
 
-// Cargar ventas
+// ── Cargar ventas (todas las del día, independiente del usuario) ──────────────
 async function loadSales() {
     const date = dateFilter.value;
     const url = date ? `/api/sales?date=${date}` : '/api/sales';
@@ -86,6 +115,7 @@ async function loadSales() {
                     <th>Prenda</th>
                     <th>Precio</th>
                     <th>Tipo Pago</th>
+                    <th>Vendedora</th>
                     <th>Recogida</th>
                     <th>Acciones</th>
                 </tr>
@@ -95,6 +125,8 @@ async function loadSales() {
 
     sales.forEach(sale => {
         const badgeClass = sale.payment_type === 'Efectivo' ? 'payment-efectivo' : 'payment-tarjeta';
+        const sellerBadgeClass = sale.seller === 'Nancy' ? 'seller-nancy' : (sale.seller === 'Celeste' ? 'seller-celeste' : 'seller-unknown');
+        const sellerLabel = sale.seller || '—';
 
         let collectedCell = '';
         if (sale.payment_type === 'Efectivo') {
@@ -113,6 +145,7 @@ async function loadSales() {
                 <td>${sale.description}</td>
                 <td>${sale.price.toFixed(2)}€</td>
                 <td><span class="payment-badge ${badgeClass}">${sale.payment_type}</span></td>
+                <td><span class="seller-badge ${sellerBadgeClass}">${sellerLabel}</span></td>
                 <td>${collectedCell}</td>
                 <td>
                     <button onclick="deleteSale(${sale.id})" class="btn-delete" title="Eliminar Venta">🗑️</button>
@@ -128,6 +161,8 @@ async function loadSales() {
 
     sales.forEach(sale => {
         const badgeClass = sale.payment_type === 'Efectivo' ? 'payment-efectivo' : 'payment-tarjeta';
+        const sellerBadgeClass = sale.seller === 'Nancy' ? 'seller-nancy' : (sale.seller === 'Celeste' ? 'seller-celeste' : 'seller-unknown');
+        const sellerLabel = sale.seller || '—';
 
         let actionsHtml = '';
         if (sale.payment_type === 'Efectivo') {
@@ -149,6 +184,7 @@ async function loadSales() {
                 <div class="sale-card-meta">
                     <span class="sale-card-time">🕐 ${sale.time}</span>
                     <span class="payment-badge ${badgeClass}">${sale.payment_type}</span>
+                    <span class="seller-badge ${sellerBadgeClass}">${sellerLabel}</span>
                 </div>
                 <div class="sale-card-actions">
                     ${actionsHtml}
@@ -163,7 +199,7 @@ async function loadSales() {
     tableDiv.innerHTML = tableHtml + cardsHtml;
 }
 
-// Marcar venta como recogida
+// ── Marcar venta como recogida ───────────────────────────────────────────────
 async function collectSale(saleId) {
     const response = await fetch(`/api/sales/${saleId}/collect`, {
         method: 'PUT'
@@ -175,9 +211,8 @@ async function collectSale(saleId) {
     }
 }
 
-// Eliminar venta
+// ── Eliminar venta ───────────────────────────────────────────────────────────
 function deleteSale(saleId) {
-    // Mostrar modal de confirmación personalizado
     const modal = document.getElementById('deleteModal');
     modal.style.display = 'flex';
 
@@ -200,7 +235,7 @@ function deleteSale(saleId) {
     };
 }
 
-// Cargar resumen mensual
+// ── Cargar resumen mensual ───────────────────────────────────────────────────
 async function loadMonthlySummary() {
     const monthSelect = document.getElementById('monthSelect');
     if (!monthSelect) return;
@@ -215,19 +250,19 @@ async function loadMonthlySummary() {
     document.getElementById('monthlyTotal').textContent = `${summary.total.toFixed(2)}€`;
 }
 
-// Filtrar por fecha
+// ── Filtrar por fecha ────────────────────────────────────────────────────────
 function filterSales() {
     loadSales();
 }
 
-// Exportar CSV
+// ── Exportar CSV ─────────────────────────────────────────────────────────────
 async function exportCSV() {
     const date = dateFilter.value;
     const url = date ? `/api/export?date=${date}` : '/api/export';
     window.location.href = url;
 }
 
-// Mostrar mensaje
+// ── Mostrar mensaje ──────────────────────────────────────────────────────────
 function showMessage(msg) {
     const message = document.createElement('div');
     message.className = 'success-message';
@@ -242,7 +277,7 @@ function showMessage(msg) {
     setTimeout(() => message.remove(), 3000);
 }
 
-// Establecer fecha de hoy por defecto
+// ── Establecer fecha de hoy por defecto ──────────────────────────────────────
 function setTodayFilter() {
     const today = new Date().toISOString().split('T')[0];
     dateFilter.value = today;

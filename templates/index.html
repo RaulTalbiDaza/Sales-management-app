@@ -13,6 +13,10 @@
         <header>
             <h1>📊 Gorgeous Vintage</h1>
             <p>Registro de Ventas</p>
+            <div id="activeUserBadge" class="active-user-badge" style="display:none;">
+                <span id="activeUserName"></span>
+                <button onclick="changeUser()" class="btn-change-user" title="Cambiar usuario">🔄 Cambiar</button>
+            </div>
         </header>
 
         <main>
@@ -119,6 +123,23 @@
             </section>
         </main>
     </div>
+    <!-- Modal de selección de usuario -->
+    <div id="userModal" class="modal-overlay" style="display:flex;">
+        <div class="modal-box user-modal-box">
+            <div class="modal-icon">👥</div>
+            <h3>¿Quién está vendiendo hoy?</h3>
+            <p>Selecciona tu nombre para registrar las ventas correctamente.</p>
+            <div class="user-buttons">
+                <button id="btnNancy" onclick="selectUser('Nancy')" class="btn-user btn-nancy">
+                    👩‍💼 Nancy
+                </button>
+                <button id="btnCeleste" onclick="selectUser('Celeste')" class="btn-user btn-celeste">
+                    👩‍💼 Celeste
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal de confirmación de eliminación -->
     <div id="deleteModal" class="modal-overlay">
         <div class="modal-box">
